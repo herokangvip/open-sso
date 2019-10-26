@@ -74,11 +74,11 @@ public final class CookieUtils {
             if (cookieMaxage > 0)
                 cookie.setMaxAge(cookieMaxage);
             if (null != request) {// 设置域名的cookie
-                String domainName = getDomainName(request);
-//                System.out.println(domainName);
+                /*String domainName = getDomainName(request);
                 if (!"localhost".equals(domainName)) {
                     cookie.setDomain(domainName);
-                }
+                }*/
+                cookie.setDomain("hk.com");
             }
             cookie.setPath("/");
             response.addCookie(cookie);
@@ -104,11 +104,12 @@ public final class CookieUtils {
             if (cookieMaxage > 0)
                 cookie.setMaxAge(cookieMaxage);
             if (null != request) {// 设置域名的cookie
-                String domainName = getDomainName(request);
-//                System.out.println(domainName);
+                /*String domainName = getDomainName(request);
                 if (!"localhost".equals(domainName)) {
                     cookie.setDomain(domainName);
-                }
+                }*/
+                // TODO: 2019/10/26
+                cookie.setDomain("hk.com");
             }
             cookie.setPath("/");
             response.addCookie(cookie);

@@ -1,7 +1,9 @@
 package com.hk.sso.client.interceptor.mvc;
 
 import com.hk.sso.client.interceptor.LoginInterceptor;
+import com.hk.sso.common.utils.CookieUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,15 +15,18 @@ import javax.servlet.http.HttpServletResponse;
 public class MvcLoginInterceptor extends LoginInterceptor implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws RuntimeException {
         try {
             boolean checkResult = checkLoginTicket(request, response);
-            if (needRedirect) {
-                response.sendRedirect(ssoLoginUrl+"?redirect"+redirectUrl);
+            if (!checkResult) {
+                CookieUtils.deleteCookie(request, response, cookieName);
+                if (needRedirect) {
+                    response.sendRedirect(ssoLoginUrl + "?redirect=" + redirectUrl);
+                }
             }
             return checkResult;
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException("login interceptor error!");
         }
     }
 

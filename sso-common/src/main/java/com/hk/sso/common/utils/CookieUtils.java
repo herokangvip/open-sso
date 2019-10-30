@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author heroking
@@ -45,48 +46,45 @@ public final class CookieUtils {
 
     /**
      * 设置Cookie的值 在指定时间内生效, 编码参数(指定编码)
+     * cookieMaxAge：-1：session级别，0：删除，>0：cookie生效的秒数
      */
     public static void setCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
-                                 String cookieValue, int cookieMaxAge, String encodeString) {
-        doSetCookie(request, response, cookieName, cookieValue, cookieMaxAge, encodeString);
+                                 String cookieValue, int cookieMaxAge) throws UnsupportedEncodingException {
+        doSetCookie(request, response, cookieName, cookieValue, cookieMaxAge);
     }
 
     /**
      * 删除Cookie带cookie域名
      */
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response,
-                                    String cookieName, String encodeString) {
-        doSetCookie(request, response, cookieName, "", -1, encodeString);
+                                    String cookieName) throws UnsupportedEncodingException {
+        doSetCookie(request, response, cookieName, "", 0);
     }
 
 
     /**
      * 设置Cookie的值，并使其在指定时间内生效
      *
-     * @param cookieMaxage cookie生效的最大秒数
+     * @param cookieMaxAge cookie生效的最大秒数
      */
     private static void doSetCookie(HttpServletRequest request, HttpServletResponse response,
-                                          String cookieName, String cookieValue, int cookieMaxage, String encodeString) {
-        try {
-            if (cookieValue == null) {
-                cookieValue = "";
-            } else {
-                cookieValue = URLEncoder.encode(cookieValue, encodeString);
-            }
-            Cookie cookie = new Cookie(cookieName, cookieValue);
-            if (cookieMaxage > 0)
-                cookie.setMaxAge(cookieMaxage);
-            if (null != request) {// 设置域名的cookie
-                String domainName = getDomainName(request);
-                //此处设置父级cookie：.xx.xx和版本有关，此处使用springboot2不需要写.，不然会报错可以添加config解决
-                cookie.setDomain(domainName.substring(1));
-            }
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);
-            response.addCookie(cookie);
-        } catch (Exception e) {
-            throw new OpenSsoException("set cookie Exception");
+                                    String cookieName, String cookieValue, int cookieMaxAge) throws UnsupportedEncodingException {
+        if (cookieValue == null) {
+            cookieValue = "";
+        } else {
+            cookieValue = URLEncoder.encode(cookieValue, "UTF-8");
         }
+        Cookie cookie = new Cookie(cookieName, cookieValue);
+        cookie.setMaxAge(cookieMaxAge);
+        if (null != request) {// 设置域名的cookie
+            String domainName = getDomainName(request);
+            //此处设置父级cookie：.xx.xx和版本有关，此处使用springboot2不需要写.，不然会报错可以添加config解决
+            cookie.setDomain(domainName.substring(1));
+        }
+        cookie.setPath("/");
+        //XSS防护防止js读取cookie
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 
     /**

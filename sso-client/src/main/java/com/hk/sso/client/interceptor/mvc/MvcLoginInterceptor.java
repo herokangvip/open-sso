@@ -8,7 +8,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author heroking
@@ -19,21 +18,13 @@ public class MvcLoginInterceptor extends LoginInterceptor implements HandlerInte
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        try {
-            boolean checkResult = checkLoginTicket(request, response);
-            if (!checkResult) {
-                CookieUtils.deleteCookie(request, response, cookieName, StandardCharsets.UTF_8.toString());
-                if (needRedirect) {
-                    response.sendRedirect(ssoLoginUrl + "?redirect=" + redirectUrl);
-                }
-            }
-            return checkResult;
-        } catch (OpenSsoException e) {
+        boolean checkResult = checkLoginTicket(request, response);
+        if (!checkResult) {
+            CookieUtils.deleteCookie(request, response, cookieName);
             if (needRedirect) {
                 response.sendRedirect(ssoLoginUrl + "?redirect=" + redirectUrl);
             }
-            return false;
         }
+        return checkResult;
     }
-
 }

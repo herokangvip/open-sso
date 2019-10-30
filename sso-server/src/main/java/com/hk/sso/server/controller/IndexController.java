@@ -8,9 +8,11 @@ import com.hk.sso.common.utils.TicketUtils;
 import com.hk.sso.server.domain.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -41,9 +43,11 @@ public class IndexController {
      */
     public String cookieSignKey = "8f8c36c8071fc4d15e49888902f348c8";
 
-    @RequestMapping("api/login")
+    @PostMapping("api/login")
     @ResponseBody
     public WebResult<String> login(User user, String redirectUrl, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String token = CookieUtils.getCookieValue(request, "token", "utf-8");
+        System.out.println("跨站请求伪造=====:"+token);
         String s = DigestUtils.md5DigestAsHex("admin".getBytes(StandardCharsets.UTF_8));
         if ("admin".equals(user.getName()) && s.equals(user.getPassword())) {
             AuthTicket authTicket = new AuthTicket(1L, "毛毛", 1, 1572090022000L, 1582090022000L, "");
@@ -51,7 +55,7 @@ public class IndexController {
             CookieSignUtils.createSign(authTicket, cookieSignKey);
             String value = TicketUtils.encryptTicket(authTicket, cookieEncryptKey);
 
-            CookieUtils.setCookie(request, response, "token", value, 36000000, "UTF-8");
+            CookieUtils.setCookie(request, response, "token", value, 36000000);
             return new WebResult<>(200,"",redirectUrl);
         }
         return new WebResult<>(400,"","http://ssoclient.hk.com:8081/login");

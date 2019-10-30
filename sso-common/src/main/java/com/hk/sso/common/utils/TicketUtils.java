@@ -28,7 +28,7 @@ public class TicketUtils {
             String sign = split[5];
             return new AuthTicket(uid, pin, version, time, expire, sign);
         } catch (Exception e) {
-            throw new OpenSsoException("sso decryptTicket error" + e.getMessage());
+            throw new OpenSsoException("sso decryptTicket error");
         }
     }
 
@@ -44,8 +44,7 @@ public class TicketUtils {
                     .append(authTicket.getSign()).append(",");
             return AESUtils.encrypt(sb.toString(), cookieEncryptKey);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new OpenSsoException("sso encryptTicket error" + e.getMessage());
         }
-        return null;
     }
 }

@@ -4,6 +4,7 @@ import com.hk.sso.client.service.HttpSsoRemoteService;
 import com.hk.sso.common.domain.AuthTicket;
 import com.hk.sso.common.enums.CookieSignType;
 import com.hk.sso.common.enums.LoginStatus;
+import com.hk.sso.common.exception.OpenSsoException;
 import com.hk.sso.common.service.SsoRemoteService;
 import com.hk.sso.common.utils.CookieSignUtils;
 import com.hk.sso.common.utils.CookieUtils;
@@ -72,31 +73,36 @@ public class LoginInterceptor {
 
 
     protected boolean checkLoginTicket(HttpServletRequest request, HttpServletResponse response) {
-        //获取登录态cookie
-        String token = CookieUtils.getCookieValue(request, cookieName, charset);
-        if (token == null || "".equals(token.trim())) {
-            return false;
-        }
-
-        //解析登录态，转换ticket
-        AuthTicket authTicket = TicketUtils.decryptTicket(token,cookieEncryptKey);
-
-
-        if (authTicket == null || authTicket.isExpired() || authTicket.isIllegal()) {
-            return false;
-        }
-
-        //客户端验证登录态cookie的签名
-        if (cookieSignType == CookieSignType.CLIENT.code) {
-            boolean cookieSignResult = CookieSignUtils.validateSign(authTicket, cookieSignKey);
-            if (!cookieSignResult) {
+        try {
+            //获取登录态cookie
+            String token = CookieUtils.getCookieValue(request, cookieName, charset);
+            if (token == null || "".equals(token.trim())) {
                 return false;
             }
-        }
 
-        //远程服务校验登录态
-        LoginStatus loginStatus = checkFromRemote(authTicket);
-        return LoginStatus.SUCCESS.equals(loginStatus);
+            //解析登录态，转换ticket
+            AuthTicket authTicket = TicketUtils.decryptTicket(token,cookieEncryptKey);
+
+
+            if (authTicket == null || authTicket.isExpired() || authTicket.isIllegal()) {
+                return false;
+            }
+
+            //客户端验证登录态cookie的签名
+            if (cookieSignValidate && cookieSignType == CookieSignType.CLIENT.code) {
+                boolean cookieSignResult = CookieSignUtils.validateSign(authTicket, cookieSignKey);
+                if (!cookieSignResult) {
+                    return false;
+                }
+            }
+
+            //远程服务校验登录态
+            LoginStatus loginStatus = checkFromRemote(authTicket);
+            return LoginStatus.SUCCESS.equals(loginStatus);
+        } catch (OpenSsoException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private LoginStatus checkFromRemote(AuthTicket authTicket) {

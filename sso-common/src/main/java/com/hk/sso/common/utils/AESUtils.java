@@ -1,6 +1,7 @@
 package com.hk.sso.common.utils;
 
 
+import com.hk.sso.common.exception.OpenSsoException;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 import javax.crypto.Cipher;
@@ -14,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AESUtils {
     //偏移量
-    private static final String VIPARA = "JF45E7TD8ST4GK25";   //AES 为16bytes. DES 为8bytes
+    private static final String VIPARA = "0c1bd30632258f0e";   //AES 为16bytes. DES 为8bytes
 
     //编码方式
     private static final String CODE_TYPE = "UTF-8";
@@ -22,6 +23,7 @@ public class AESUtils {
     private static final String AES_TYPE = "AES/CBC/PKCS5Padding";
     //私钥
     //private static final String AES_KEY = "5JY9D5G8RET54HSD";   //AES固定格式为128/192/256 bits.即：16/24/32bytes。DES固定格式为128bits，即8bytes。
+
 
     /**
      * 加密
@@ -45,8 +47,7 @@ public class AESUtils {
 
             return new BASE64Encoder().encode(encryptedData);
         } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+            throw new OpenSsoException("sso encrypt error" + e.getMessage());
         }
     }
 
@@ -68,8 +69,7 @@ public class AESUtils {
             byte[] decryptedData = cipher.doFinal(byteMi);
             return new String(decryptedData, CODE_TYPE);
         } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+            throw new OpenSsoException("sso decrypt error" + e.getMessage());
         }
     }
 

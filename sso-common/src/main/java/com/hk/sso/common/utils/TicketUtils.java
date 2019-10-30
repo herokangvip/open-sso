@@ -1,6 +1,7 @@
 package com.hk.sso.common.utils;
 
 import com.hk.sso.common.domain.AuthTicket;
+import com.hk.sso.common.exception.OpenSsoException;
 
 /**
  * @author heroking
@@ -19,17 +20,16 @@ public class TicketUtils {
             if (split.length != AuthTicket.class.getDeclaredFields().length) {
                 return null;
             }
-            long uid = Long.parseLong(split[0]);
+            Long uid = Long.parseLong(split[0]);
             String pin = split[1];
-            int version = Integer.parseInt(split[2]);
-            long time = Long.parseLong(split[3]);
-            long expire = Long.parseLong(split[4]);
+            Integer version = Integer.parseInt(split[2]);
+            Long time = Long.parseLong(split[3]);
+            Long expire = Long.parseLong(split[4]);
             String sign = split[5];
             return new AuthTicket(uid, pin, version, time, expire, sign);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new OpenSsoException("sso decryptTicket error" + e.getMessage());
         }
-        return null;
     }
 
     public static String encryptTicket(AuthTicket authTicket, String cookieEncryptKey) {

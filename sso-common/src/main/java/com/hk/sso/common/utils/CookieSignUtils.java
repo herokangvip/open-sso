@@ -28,10 +28,10 @@ public class CookieSignUtils {
      * @param authTicket
      * @return
      */
-    public static String createSign(AuthTicket authTicket,String key) {
+    public static void createSign(AuthTicket authTicket,String key) {
         StringBuilder sb = new StringBuilder();
         sb.append(authTicket.getPin()).append(",").append(authTicket.getUid()).reverse();
-        authTicket.setSign(sb.toString());
-        return AESUtils.encrypt(authTicket.getSign(), key);
+        String encrypt = AESUtils.encrypt(sb.toString(), key);
+        authTicket.setSign(encrypt);
     }
 }

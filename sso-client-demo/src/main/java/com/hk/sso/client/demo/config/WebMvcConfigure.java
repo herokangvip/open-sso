@@ -1,17 +1,15 @@
 package com.hk.sso.client.demo.config;
 
 import com.hk.sso.client.interceptor.mvc.MvcLoginInterceptor;
+import com.hk.sso.client.service.HttpSsoRemoteService;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -19,31 +17,21 @@ import java.util.List;
 @Configuration
 public class WebMvcConfigure implements WebMvcConfigurer {
 
+    @Resource
+    private SsoInterceptorConfig ssoInterceptorConfig;
+
 
     /**
      * 拦截器
+     *
      * @param registry
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new MvcLoginInterceptor() {
-        }).addPathPatterns("/*");
-    }
-
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addFormatter(new DateFormatter("yyyy-MM-dd HH:mm:ss"));
-    }
-
-    //cors跨域支持
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .maxAge(3000L)
-                .allowCredentials(true)
-                .allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
-                        "Access-Control-Request-Headers")
-                .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
-                .allowedMethods("POST", "GET","OPTIONS","PUT");
+        MvcLoginInterceptor mvcLoginInterceptor = configMvcLoginInterceptor(ssoInterceptorConfig);
+        // TODO: 2019/10/29 认证服务
+        mvcLoginInterceptor.ssoRemoteService = new HttpSsoRemoteService();
+        registry.addInterceptor(mvcLoginInterceptor).addPathPatterns("/**");
     }
 
 
@@ -55,18 +43,48 @@ public class WebMvcConfigure implements WebMvcConfigurer {
                 ModelAndView mv = new ModelAndView();
                 MappingJackson2JsonView view = new MappingJackson2JsonView();
                 mv.setView(view);
-                if (e instanceof NumberFormatException) {
-                    mv.addObject("status", "500");
-                    mv.addObject("message", "NumberFormatException");
-                    return mv;
-                }
                 mv.addObject("status", "500");
-                mv.addObject("message", "系统错误");
-                mv.addObject("error", e);
+                mv.addObject("message", "try later");
                 return mv;
             }
         });
     }
 
 
+    private MvcLoginInterceptor configMvcLoginInterceptor(SsoInterceptorConfig ssoInterceptorConfig) {
+        MvcLoginInterceptor mvcLoginInterceptor = new MvcLoginInterceptor();
+        String cookieName = ssoInterceptorConfig.getCookieName();
+        if (cookieName != null && !"".equals(cookieName.trim())) {
+            mvcLoginInterceptor.cookieName = cookieName;
+        }
+        Integer cookieSignType = ssoInterceptorConfig.getCookieSignType();
+        if (cookieSignType != null && (cookieSignType == 1 || cookieSignType == 2)) {
+            mvcLoginInterceptor.cookieSignType = cookieSignType;
+        }
+        String cookieEncryptKey = ssoInterceptorConfig.getCookieEncryptKey();
+        if (cookieEncryptKey != null && !"".equals(cookieEncryptKey.trim())) {
+            mvcLoginInterceptor.cookieEncryptKey = cookieEncryptKey;
+        }
+        String charset = ssoInterceptorConfig.getCharset();
+        if (charset != null && !"".equals(charset.trim())) {
+            mvcLoginInterceptor.charset = charset;
+        }
+        String redirectUrl = ssoInterceptorConfig.getRedirectUrl();
+        if (redirectUrl != null && !"".equals(redirectUrl.trim())) {
+            mvcLoginInterceptor.redirectUrl = redirectUrl;
+        }
+        String ssoLoginUrl = ssoInterceptorConfig.getSsoLoginUrl();
+        if (ssoLoginUrl != null && !"".equals(ssoLoginUrl.trim())) {
+            mvcLoginInterceptor.ssoLoginUrl = ssoLoginUrl;
+        }
+        Boolean needRedirect = ssoInterceptorConfig.getNeedRedirect();
+        if (ssoLoginUrl != null) {
+            mvcLoginInterceptor.needRedirect = needRedirect;
+        }
+        Boolean cookieSignValidate = ssoInterceptorConfig.getCookieSignValidate();
+        if (ssoLoginUrl != null) {
+            mvcLoginInterceptor.cookieSignValidate = cookieSignValidate;
+        }
+        return mvcLoginInterceptor;
+    }
 }

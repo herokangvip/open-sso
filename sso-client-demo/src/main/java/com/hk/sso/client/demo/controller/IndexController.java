@@ -18,9 +18,13 @@ public class IndexController {
     public WebResult<String> index() {
         return new WebResult<String>(200,"success","index");
     }
-    @RequestMapping("/login")
+
+    @RequestMapping("/test")
     @ResponseBody
-    public WebResult<String> login() {
-        return new WebResult<String>(200,"success","login");
+    public WebResult<String> test() {
+        return new WebResult<String>(200,"success","登陆成功后跳转地址");
     }
+
+
+
 }

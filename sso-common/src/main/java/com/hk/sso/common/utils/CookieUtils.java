@@ -1,5 +1,7 @@
 package com.hk.sso.common.utils;
 
+import com.hk.sso.common.exception.OpenSsoException;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +37,7 @@ public final class CookieUtils {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new OpenSsoException("get cookie UnsupportedEncodingException");
         }
         return retValue;
     }
@@ -53,46 +55,17 @@ public final class CookieUtils {
      * 删除Cookie带cookie域名
      */
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response,
-                                    String cookieName) {
-        doSetCookie(request, response, cookieName, "", -1, false);
+                                    String cookieName, String encodeString) {
+        doSetCookie(request, response, cookieName, "", -1, encodeString);
     }
+
 
     /**
      * 设置Cookie的值，并使其在指定时间内生效
      *
      * @param cookieMaxage cookie生效的最大秒数
      */
-    private static final void doSetCookie(HttpServletRequest request, HttpServletResponse response,
-                                          String cookieName, String cookieValue, int cookieMaxage, boolean isEncode) {
-        try {
-            if (cookieValue == null) {
-                cookieValue = "";
-            } else if (isEncode) {
-                cookieValue = URLEncoder.encode(cookieValue, "utf-8");
-            }
-            Cookie cookie = new Cookie(cookieName, cookieValue);
-            if (cookieMaxage > 0)
-                cookie.setMaxAge(cookieMaxage);
-            if (null != request) {// 设置域名的cookie
-                /*String domainName = getDomainName(request);
-                if (!"localhost".equals(domainName)) {
-                    cookie.setDomain(domainName);
-                }*/
-                cookie.setDomain("hk.com");
-            }
-            cookie.setPath("/");
-            response.addCookie(cookie);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 设置Cookie的值，并使其在指定时间内生效
-     *
-     * @param cookieMaxage cookie生效的最大秒数
-     */
-    private static final void doSetCookie(HttpServletRequest request, HttpServletResponse response,
+    private static void doSetCookie(HttpServletRequest request, HttpServletResponse response,
                                           String cookieName, String cookieValue, int cookieMaxage, String encodeString) {
         try {
             if (cookieValue == null) {
@@ -104,24 +77,22 @@ public final class CookieUtils {
             if (cookieMaxage > 0)
                 cookie.setMaxAge(cookieMaxage);
             if (null != request) {// 设置域名的cookie
-                /*String domainName = getDomainName(request);
-                if (!"localhost".equals(domainName)) {
-                    cookie.setDomain(domainName);
-                }*/
-                // TODO: 2019/10/26
-                cookie.setDomain("hk.com");
+                String domainName = getDomainName(request);
+                //此处设置父级cookie：.xx.xx和版本有关，此处使用springboot2不需要写.，不然会报错可以添加config解决
+                cookie.setDomain(domainName.substring(1));
             }
             cookie.setPath("/");
+            cookie.setHttpOnly(true);
             response.addCookie(cookie);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new OpenSsoException("set cookie Exception");
         }
     }
 
     /**
      * 得到cookie的域名
      */
-    private static final String getDomainName(HttpServletRequest request) {
+    private static String getDomainName(HttpServletRequest request) {
         String domainName = null;
 
         String serverName = request.getRequestURL().toString();

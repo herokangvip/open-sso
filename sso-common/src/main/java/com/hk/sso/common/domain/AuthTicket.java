@@ -16,22 +16,22 @@ public class AuthTicket {
     /**
      * userId
      */
-    private long uid;
+    private Long uid;
 
     /**
      * 版本号
      */
-    private int version;
+    private Integer version;
 
     /**
      * 创建时间
      */
-    private long time;
+    private Long time;
 
     /**
      * 过期时间
      */
-    private long expire;
+    private Long expire;
 
     /**
      * 签名
@@ -41,7 +41,7 @@ public class AuthTicket {
     public AuthTicket() {
     }
 
-    public AuthTicket(long uid, String pin, int version, long time, long expire, String sign) {
+    public AuthTicket(Long uid, String pin, Integer version, Long time, Long expire, String sign) {
         this.version = version;
         this.uid = uid;
         this.sign = sign;
@@ -50,11 +50,48 @@ public class AuthTicket {
         this.expire = expire;
     }
 
-    public int getVersion() {
+
+
+
+    /**
+     * 是否过期
+     *
+     * @return true:过期；false:未过期
+     */
+    public boolean isExpired() {
+        Long expire = this.expire;
+        Long time = this.time;
+        Long current = System.currentTimeMillis();
+        return time > current || expire < current;
+    }
+
+    /**
+     * 是否非法
+     *
+     * @return true:非法；false:合法
+     */
+    public boolean isIllegal() {
+        String pin = this.pin;
+        if (pin == null || "".equals(pin.trim())) {
+            return true;
+        }
+        Long uid = this.uid;
+        if (uid < 0) {
+            return true;
+        }
+        Integer version = this.version;
+        if (version < 0) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public Integer getVersion() {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 
@@ -66,27 +103,27 @@ public class AuthTicket {
         this.pin = pin;
     }
 
-    public long getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
-    public long getExpire() {
+    public Long getExpire() {
         return expire;
     }
 
-    public void setExpire(long expire) {
+    public void setExpire(Long expire) {
         this.expire = expire;
     }
 
-    public long getUid() {
+    public Long getUid() {
         return uid;
     }
 
-    public void setUid(long uid) {
+    public void setUid(Long uid) {
         this.uid = uid;
     }
 
@@ -98,6 +135,7 @@ public class AuthTicket {
         this.sign = sign;
     }
 
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -105,53 +143,22 @@ public class AuthTicket {
 
         AuthTicket that = (AuthTicket) object;
 
-        if (uid != that.uid) return false;
-        if (version != that.version) return false;
-        if (time != that.time) return false;
-        if (expire != that.expire) return false;
-        return Objects.equals(pin, that.pin);
+        if (!Objects.equals(pin, that.pin)) return false;
+        if (!Objects.equals(uid, that.uid)) return false;
+        if (!Objects.equals(version, that.version)) return false;
+        if (!Objects.equals(time, that.time)) return false;
+        if (!Objects.equals(expire, that.expire)) return false;
+        return Objects.equals(sign, that.sign);
     }
 
     @Override
     public int hashCode() {
         int result = pin != null ? pin.hashCode() : 0;
-        result = 31 * result + (int) (uid ^ (uid >>> 32));
-        result = 31 * result + version;
-        result = 31 * result + (int) (time ^ (time >>> 32));
-        result = 31 * result + (int) (expire ^ (expire >>> 32));
+        result = 31 * result + (uid != null ? uid.hashCode() : 0);
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        result = 31 * result + (time != null ? time.hashCode() : 0);
+        result = 31 * result + (expire != null ? expire.hashCode() : 0);
+        result = 31 * result + (sign != null ? sign.hashCode() : 0);
         return result;
-    }
-
-    /**
-     * 是否过期
-     *
-     * @return true:过期；false:未过期
-     */
-    public boolean isExpired() {
-        long expire = this.expire;
-        long time = this.time;
-        long current = System.currentTimeMillis();
-        return time > current || expire < current;
-    }
-
-    /**
-     * 是否非法
-     *
-     * @return true:非法；false:合法
-     */
-    public boolean isIllegal() {
-        String pin = this.pin;
-        if (pin == null || pin.trim().equals("")) {
-            return true;
-        }
-        long uid = this.uid;
-        if (uid < 0) {
-            return false;
-        }
-        int version = this.version;
-        if (version < 0) {
-            return false;
-        }
-        return true;
     }
 }

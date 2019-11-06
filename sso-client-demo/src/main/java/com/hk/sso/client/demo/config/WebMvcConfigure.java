@@ -47,8 +47,8 @@ public class WebMvcConfigure implements WebMvcConfigurer {
                 ModelAndView mv = new ModelAndView();
                 MappingJackson2JsonView view = new MappingJackson2JsonView();
                 mv.setView(view);
-                mv.addObject("status", "500");
-                mv.addObject("message", "try later");
+                mv.addObject("code", 500);
+                mv.addObject("msg", "try later");
                 return mv;
             }
         });

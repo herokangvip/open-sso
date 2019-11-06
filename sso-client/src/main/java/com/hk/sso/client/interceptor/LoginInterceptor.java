@@ -1,6 +1,5 @@
 package com.hk.sso.client.interceptor;
 
-import com.hk.sso.client.service.HttpSsoRemoteService;
 import com.hk.sso.common.domain.AuthTicket;
 import com.hk.sso.common.enums.CookieSignType;
 import com.hk.sso.common.enums.LoginStatus;
@@ -69,7 +68,7 @@ public class LoginInterceptor {
      * http/https:      HttpSsoRemoteService
      * rpc:             RpcSsoRemoteService
      */
-    public SsoRemoteService ssoRemoteService = new HttpSsoRemoteService();
+    public SsoRemoteService ssoRemoteService;
 
 
     protected boolean checkLoginTicket(HttpServletRequest request, HttpServletResponse response) {
@@ -81,7 +80,7 @@ public class LoginInterceptor {
             }
 
             //解析登录态，转换ticket
-            AuthTicket authTicket = TicketUtils.decryptTicket(token,cookieEncryptKey);
+            AuthTicket authTicket = TicketUtils.decryptTicket(token, cookieEncryptKey);
 
 
             if (authTicket == null || authTicket.isExpired() || authTicket.isIllegal()) {
@@ -97,23 +96,27 @@ public class LoginInterceptor {
             }
 
             //远程服务校验登录态
-            LoginStatus loginStatus = checkFromRemote(authTicket);
-            return LoginStatus.SUCCESS.equals(loginStatus);
+            int loginStatus = checkFromRemote(authTicket);
+            return LoginStatus.SUCCESS.code == loginStatus;
         } catch (OpenSsoException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private LoginStatus checkFromRemote(AuthTicket authTicket) {
+    private int checkFromRemote(AuthTicket authTicket) {
         // TODO: 2019/10/25
-        boolean validateSign = false;
-        if (cookieSignValidate && cookieSignType == CookieSignType.SERVER.code) {
-            validateSign = true;
+        try {
+            boolean validateSign = false;
+            if (cookieSignValidate && cookieSignType == CookieSignType.SERVER.code) {
+                validateSign = true;
+            }
+            return ssoRemoteService.checkFromRemote(authTicket, validateSign);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return ssoRemoteService.checkFromRemote(authTicket, validateSign);
+        return LoginStatus.SERVER_ERROR.code;
     }
-
 
 
 }

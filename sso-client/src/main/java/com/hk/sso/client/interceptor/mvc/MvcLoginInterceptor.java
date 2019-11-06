@@ -21,6 +21,7 @@ public class MvcLoginInterceptor extends LoginInterceptor implements HandlerInte
         boolean checkResult = checkLoginTicket(request, response);
         if (!checkResult) {
             CookieUtils.deleteCookie(request, response, cookieName);
+            CookieUtils.deleteCookie(request, response, "pin");
             if (needRedirect) {
                 response.sendRedirect(ssoLoginUrl + "?redirect=" + redirectUrl);
             }

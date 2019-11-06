@@ -1,5 +1,6 @@
 package com.hk.sso.common.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -7,8 +8,9 @@ import java.util.Objects;
  * @version 1.0
  * @date 2019/10/24 18:01
  */
-public class AuthTicket {
+public class AuthTicket implements Serializable {
 
+    private static final long serialVersionUID = -1L;
     /**
      * 用户pin
      */

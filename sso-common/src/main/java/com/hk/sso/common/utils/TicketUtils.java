@@ -17,7 +17,8 @@ public class TicketUtils {
                 return null;
             }
             String[] split = decrypt.split(",");
-            if (split.length != AuthTicket.class.getDeclaredFields().length) {
+            //加解密组合方式用户可以自定义，比如此处不允许用户pin等属性有逗号
+            if (split.length != AuthTicket.class.getDeclaredFields().length -1) {
                 return null;
             }
             Long uid = Long.parseLong(split[0]);

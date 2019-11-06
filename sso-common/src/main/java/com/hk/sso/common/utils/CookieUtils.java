@@ -54,6 +54,15 @@ public final class CookieUtils {
     }
 
     /**
+     * 设置Cookie的值 在指定时间内生效, 编码参数(指定编码)
+     * cookieMaxAge：-1：session级别，0：删除，>0：cookie生效的秒数
+     */
+    public static void setSessionCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
+                                 String cookieValue) throws UnsupportedEncodingException {
+        doSetCookie(request, response, cookieName, cookieValue, -1);
+    }
+
+    /**
      * 删除Cookie带cookie域名
      */
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response,

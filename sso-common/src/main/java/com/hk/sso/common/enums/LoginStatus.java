@@ -11,8 +11,9 @@ public enum LoginStatus {
     PASSWORD_CHANGED(3,"密码已修改请重新登录"),
     BLACK_USER(4,"黑名单用户"),
     ILLEGAL_USER(5,"用户非法"),
-    KEY_CHANGED(6,"更换加密key,请重新登录"),
-    SERVER_ERROR(7,"服务器错误");
+    SIGN_ERROR(6,"cookie签名错误"),
+    SERVER_ERROR(7,"服务器错误"),
+    LOGOUT(8,"退出登录、没有登录态");
     public int code;
     public String desc;
 

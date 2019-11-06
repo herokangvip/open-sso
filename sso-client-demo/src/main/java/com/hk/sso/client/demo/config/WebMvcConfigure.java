@@ -1,7 +1,9 @@
 package com.hk.sso.client.demo.config;
 
 import com.hk.sso.client.interceptor.mvc.MvcLoginInterceptor;
-import com.hk.sso.client.service.HttpSsoRemoteService;
+import com.hk.sso.common.service.SsoRemoteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,6 +23,8 @@ public class WebMvcConfigure implements WebMvcConfigurer {
     private SsoInterceptorConfig ssoInterceptorConfig;
 
 
+    @Autowired
+    private SsoRemoteService ssoRemoteService;
     /**
      * 拦截器
      *
@@ -29,8 +33,8 @@ public class WebMvcConfigure implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         MvcLoginInterceptor mvcLoginInterceptor = configMvcLoginInterceptor(ssoInterceptorConfig);
-        // TODO: 2019/10/29 认证服务
-        mvcLoginInterceptor.ssoRemoteService = new HttpSsoRemoteService();
+        // TODO: 2019/10/29 注入认证服务
+        mvcLoginInterceptor.ssoRemoteService = ssoRemoteService;
         registry.addInterceptor(mvcLoginInterceptor).addPathPatterns("/**");
     }
 

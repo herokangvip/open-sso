@@ -33,7 +33,7 @@ public class WebMvcConfigure implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         MvcLoginInterceptor mvcLoginInterceptor = configMvcLoginInterceptor(ssoInterceptorConfig);
-        // TODO: 2019/10/29 注入认证服务
+        //2019/10/29 注入认证服务
         mvcLoginInterceptor.ssoRemoteService = ssoRemoteService;
         registry.addInterceptor(mvcLoginInterceptor).addPathPatterns("/**");
     }

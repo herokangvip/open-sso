@@ -105,7 +105,6 @@ public class LoginInterceptor {
     }
 
     private int checkFromRemote(AuthTicket authTicket) {
-        // TODO: 2019/10/25
         try {
             boolean validateSign = false;
             if (cookieSignValidate && cookieSignType == CookieSignType.SERVER.code) {

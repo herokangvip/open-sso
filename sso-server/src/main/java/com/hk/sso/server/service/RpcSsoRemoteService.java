@@ -8,7 +8,7 @@ import com.hk.sso.common.utils.TicketUtils;
 import com.hk.sso.server.utils.TicketRedisUtils;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/26 16:20
  */

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author heroking
  * @version 1.0
- * @date 2019/10/24 17:54
+ * @date 2019/10/24 17:54.
  */
 public class LoginInterceptor {
 

@@ -19,7 +19,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/26 19:31
  * 输入框使用password，请求采用post

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/11/6 13:41
  */

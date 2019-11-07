@@ -4,7 +4,7 @@ import com.hk.sso.server.factory.JedisFactory;
 import redis.clients.jedis.ShardedJedis;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/11/6 17:21
  */

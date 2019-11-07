@@ -9,7 +9,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/24 22:58
  */

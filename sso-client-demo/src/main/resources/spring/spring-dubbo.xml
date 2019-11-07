@@ -7,6 +7,7 @@
     <dubbo:application name="demo-consumer"/>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+
     <dubbo:reference version="1.0.0" id="ssoRemoteService" interface="com.hk.sso.common.service.SsoRemoteService"/>
 </beans>
 

@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @author heroking
  * @version 1.0
  * @date 2019/10/27 16:15
+ *
  */
 //@Configuration
 public class CookieConfig {

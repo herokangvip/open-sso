@@ -1,7 +1,7 @@
 package com.hk.sso.common.exception;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/29 14:12
  */

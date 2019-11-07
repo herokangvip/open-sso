@@ -9,3 +9,4 @@ seesion复制共享的弊端决定这个方案并不适合大型互联网应用
 3. cookie和token结合有状态sso
 首先cookie是一个成熟的方案，有人说app不适合使用cookie其实并不恰当，app也有可以实现cookie的工具，仿cookie也可以算cookie；
 笔者工作的公司有4亿左右用户，使用的就是基于cookie的有状态协议，服务端也会存储认证cookie信息，结合加密和签名以及父级域名cookie实现多个子系统统一登录态
+app、pc、h5、wq等可以使用不同的key区分

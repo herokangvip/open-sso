@@ -4,7 +4,7 @@ import com.hk.sso.common.domain.AuthTicket;
 import com.hk.sso.common.exception.OpenSsoException;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/26 17:28
  */

@@ -8,6 +8,7 @@
     <dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181"/>
     <dubbo:protocol name="dubbo" port="20890" threads="2"/>
 
+
     <bean id="ssoRemoteService" class="com.hk.sso.server.service.RpcSsoRemoteService"/>
     <dubbo:service interface="com.hk.sso.common.service.SsoRemoteService" version="1.0.0" ref="ssoRemoteService"
                    timeout="300" retries="2" loadbalance="random" actives="0" >

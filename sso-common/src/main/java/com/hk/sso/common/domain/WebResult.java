@@ -1,7 +1,7 @@
 package com.hk.sso.common.domain;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/26 18:58
  */

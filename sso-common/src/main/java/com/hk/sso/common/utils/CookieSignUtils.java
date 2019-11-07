@@ -3,7 +3,7 @@ package com.hk.sso.common.utils;
 import com.hk.sso.common.domain.AuthTicket;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/25 21:48
  */

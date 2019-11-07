@@ -1,7 +1,7 @@
 package com.hk.sso.common.enums;
 
 /**
- * @author heroking
+ * @author heroking.
  * @version 1.0
  * @date 2019/10/25 21:51
  */

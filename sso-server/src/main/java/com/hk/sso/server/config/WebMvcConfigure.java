@@ -9,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfigure implements WebMvcConfigurer {
 
-
     //cors跨域支持
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")

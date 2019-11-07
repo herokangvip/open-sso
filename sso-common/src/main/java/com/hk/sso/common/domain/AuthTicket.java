@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * @author heroking
  * @version 1.0
- * @date 2019/10/24 18:01
+ * @date 2019/10/24 18:01.
  */
 public class AuthTicket implements Serializable {
 

@@ -3,7 +3,7 @@ package com.hk.sso.server.domain;
 import java.io.Serializable;
 
 /**
- * t_user
+ * t_user.
  * @author 
  */
 public class User implements Serializable {

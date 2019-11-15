@@ -2,6 +2,7 @@ package com.hk.sso.server.controller;
 
 import com.hk.sso.common.domain.AuthTicket;
 import com.hk.sso.common.domain.WebResult;
+import com.hk.sso.common.enums.LoginType;
 import com.hk.sso.common.utils.CookieSignUtils;
 import com.hk.sso.common.utils.CookieUtils;
 import com.hk.sso.common.utils.TicketUtils;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * @author heroking.
@@ -34,7 +36,7 @@ import java.nio.charset.StandardCharsets;
  * 关键操作（付款修改密码等）要有二次验证，邮箱，短信等密保手段
  * <p>
  * 本框架是登录态验证框架，注册、登录、登出等功能只是简单的演示具体功能
- * 需要用户自己根据自己公司的需求完善，这块定制化太高暂时没有集成
+ * 需要用户自己根据自己公司的需求完善
  */
 @Controller
 public class IndexController {
@@ -50,15 +52,25 @@ public class IndexController {
     @PostMapping("api/login")
     @ResponseBody
     public WebResult<String> login(User user, String redirectUrl, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // TODO: 2019/11/15 具体的业务逻辑用户自行处理
         String pass = DigestUtils.md5DigestAsHex("admin".getBytes(StandardCharsets.UTF_8));
+        String loginType = request.getHeader("loginType");
+        if (loginType != null && !"".equals(loginType)) {
+            CookieUtils.setSessionCookie(request, response, "loginType", "1");
+        } else {
+            return new WebResult<>(400, "", "http://ssoclient.hk.com:8081/login");
+        }
         if ("admin".equals(user.getName()) && pass.equals(user.getPassword())) {
             long now = System.currentTimeMillis();
-            AuthTicket authTicket = new AuthTicket(1L, "毛毛", 1, now, now + 1000 * 60 * 30, "");
+            String sid = UUID.randomUUID().toString().replaceAll("-","");
+            AuthTicket authTicket = new AuthTicket(sid, "pin", 1, now, now + 1000 * 60 * 30, LoginType.PC,"");
             CookieSignUtils.createSign(authTicket, cookieSignKey);
             String value = TicketUtils.encryptTicket(authTicket, cookieEncryptKey);
             //设置cookie和缓存数据
-            CookieUtils.setSessionCookie(request, response, "token", value);
+            CookieUtils.setSessionCookie(request, response, "pt_key", value);
             CookieUtils.setSessionCookie(request, response, "pin", URLDecoder.decode(authTicket.getPin(), "utf-8"));
+
+
             String s = TicketRedisUtils.setTicket(authTicket);
             return new WebResult<>(200, "", redirectUrl);
         }
@@ -70,10 +82,7 @@ public class IndexController {
     @ResponseBody
     public WebResult<String> logout(String name, HttpServletRequest request, HttpServletResponse response) {
         try {
-            //设置cookie和缓存数据
-            CookieUtils.deleteCookie(request, response, "token");
-            CookieUtils.deleteCookie(request, response, "pin");
-            Long result = TicketRedisUtils.delTicket(name);
+            //TODO 删除cookie和redis缓存数据
             return new WebResult<>(200, "", "");
         } catch (Exception e) {
             return new WebResult<>(500, "", "logout error");

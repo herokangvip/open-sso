@@ -19,6 +19,7 @@ public class WebMvcConfigure implements WebMvcConfigurer {
                 .allowedMethods("POST", "GET", "OPTIONS", "PUT", "DELETE");
     }
 
+
     /**
      * 拦截器
      *

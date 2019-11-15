@@ -49,10 +49,19 @@ public class JedisFactory {
                 shardInfoList.add(jedisShardInfo);
             }
             jedisPool = new ShardedJedisPool(config, shardInfoList);
+            ShardedJedis jedis = null;
+            try {
+                jedis = jedisPool.getResource();
+                jedis.get("init");
+            } finally {
+                if (jedis != null){
+                    jedis.close();
+                }
+            }
             logger.info("====jedis pool init success");
         } catch (Exception e) {
             logger.error("====jedis连接池初始化异常:{}", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException("====jedis连接池初始化异常");
         }
     }
 

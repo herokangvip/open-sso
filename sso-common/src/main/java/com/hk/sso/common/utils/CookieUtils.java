@@ -43,6 +43,7 @@ public final class CookieUtils {
     }
 
 
+
     /**
      * 设置Cookie的值 在指定时间内生效, 编码参数(指定编码)
      * cookieMaxAge：-1：session级别，0：删除，>0：cookie生效的秒数
@@ -89,6 +90,7 @@ public final class CookieUtils {
             //此处设置父级cookie：.xx.xx和版本有关，此处使用springboot2不需要写.，不然会报错可以添加config解决
             cookie.setDomain(domainName.substring(1));
         }
+        //cookie.setDomain(".heroking.com");
         cookie.setPath("/");
         //XSS防护防止js读取cookie
         cookie.setHttpOnly(true);

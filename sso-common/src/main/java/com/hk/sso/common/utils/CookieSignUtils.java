@@ -22,7 +22,7 @@ public class CookieSignUtils {
         //加密比解密效率更高
         //String decrypt = AESUtils.decrypt(authTicket.getSign(),key);
         StringBuilder sb = new StringBuilder();
-        sb.append(authTicket.getPin()).append(",").append(authTicket.getUid());
+        sb.append(authTicket.getPin()).append(",").append(authTicket.getSid());
         String encrypt = AESUtils.encrypt(sb.toString(), key);
         return authTicket.getSign().equals(encrypt);
     }
@@ -35,7 +35,7 @@ public class CookieSignUtils {
      */
     public static void createSign(AuthTicket authTicket, String key) {
         StringBuilder sb = new StringBuilder();
-        sb.append(authTicket.getPin()).append(",").append(authTicket.getUid());
+        sb.append(authTicket.getPin()).append(",").append(authTicket.getSid());
         String encrypt = AESUtils.encrypt(sb.toString(), key);
         authTicket.setSign(encrypt);
     }

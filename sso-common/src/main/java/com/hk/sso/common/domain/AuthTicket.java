@@ -10,15 +10,16 @@ import java.util.Objects;
  */
 public class AuthTicket implements Serializable {
 
+
     private static final long serialVersionUID = -1L;
     /**
      * 用户pin
      */
     private String pin;
     /**
-     * userId
+     * sid
      */
-    private Long uid;
+    private String sid;
 
     /**
      * 版本号
@@ -35,6 +36,7 @@ public class AuthTicket implements Serializable {
      */
     private Long expire;
 
+    private String loginType;
     /**
      * 签名
      */
@@ -43,12 +45,13 @@ public class AuthTicket implements Serializable {
     public AuthTicket() {
     }
 
-    public AuthTicket(Long uid, String pin, Integer version, Long time, Long expire, String sign) {
+    public AuthTicket(String sid, String pin, Integer version, Long time, Long expire,String loginType, String sign) {
         this.version = version;
-        this.uid = uid;
+        this.sid = sid;
         this.sign = sign;
         this.pin = pin;
         this.time = time;
+        this.loginType = loginType;
         this.expire = expire;
     }
 
@@ -77,8 +80,12 @@ public class AuthTicket implements Serializable {
         if (pin == null || "".equals(pin.trim())) {
             return true;
         }
-        Long uid = this.uid;
-        if (uid < 0) {
+        String loginType = this.loginType;
+        if (loginType==null||"".equals(loginType)) {
+            return true;
+        }
+        String sid = this.sid;
+        if (sid==null||"".equals(sid)) {
             return true;
         }
         Integer version = this.version;
@@ -121,12 +128,12 @@ public class AuthTicket implements Serializable {
         this.expire = expire;
     }
 
-    public Long getUid() {
-        return uid;
+    public String getSid() {
+        return sid;
     }
 
-    public void setUid(Long uid) {
-        this.uid = uid;
+    public void setSid(String sid) {
+        this.sid = sid;
     }
 
     public String getSign() {
@@ -137,6 +144,13 @@ public class AuthTicket implements Serializable {
         this.sign = sign;
     }
 
+    public String getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(String loginType) {
+        this.loginType = loginType;
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -146,20 +160,22 @@ public class AuthTicket implements Serializable {
         AuthTicket that = (AuthTicket) object;
 
         if (!Objects.equals(pin, that.pin)) return false;
-        if (!Objects.equals(uid, that.uid)) return false;
+        if (!Objects.equals(sid, that.sid)) return false;
         if (!Objects.equals(version, that.version)) return false;
         if (!Objects.equals(time, that.time)) return false;
         if (!Objects.equals(expire, that.expire)) return false;
+        if (!Objects.equals(loginType, that.loginType)) return false;
         return Objects.equals(sign, that.sign);
     }
 
     @Override
     public int hashCode() {
         int result = pin != null ? pin.hashCode() : 0;
-        result = 31 * result + (uid != null ? uid.hashCode() : 0);
+        result = 31 * result + (sid != null ? sid.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (time != null ? time.hashCode() : 0);
         result = 31 * result + (expire != null ? expire.hashCode() : 0);
+        result = 31 * result + (loginType != null ? loginType.hashCode() : 0);
         result = 31 * result + (sign != null ? sign.hashCode() : 0);
         return result;
     }

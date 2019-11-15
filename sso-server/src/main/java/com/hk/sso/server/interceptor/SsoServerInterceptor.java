@@ -30,22 +30,15 @@ public class SsoServerInterceptor implements HandlerInterceptor {
         }
         String remoteHost = request.getRequestURL().toString();
         boolean remoteHostIllegal = isIllegalUrl(remoteHost);
+        String data = "";
         if (remoteHostIllegal) {
-            String data = "{\"code\":403,\"message\":\"illegal source host\"}";
-            ServletOutputStream out = null;
-            try {
-                out = response.getOutputStream();
-                out.write(data.getBytes(StandardCharsets.UTF_8));
-                out.flush();
-            } finally {
-                if (out != null)
-                    out.close();
-            }
-            return false;
+            data = "{\"code\":403,\"message\":\"illegal source host\"}";
         }
         boolean illegal = isIllegalUrl(redirectUrl);
         if (illegal) {
-            String data = "{\"code\":404,\"message\":\"illegal dest url\"}";
+            data = "{\"code\":404,\"message\":\"illegal dest url\"}";
+        }
+        if (remoteHostIllegal || illegal) {
             ServletOutputStream out = null;
             try {
                 out = response.getOutputStream();

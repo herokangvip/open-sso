@@ -21,13 +21,14 @@ public class TicketUtils {
             if (split.length != AuthTicket.class.getDeclaredFields().length -1) {
                 return null;
             }
-            Long uid = Long.parseLong(split[0]);
+            String sid = split[0];
             String pin = split[1];
             Integer version = Integer.parseInt(split[2]);
             Long time = Long.parseLong(split[3]);
             Long expire = Long.parseLong(split[4]);
-            String sign = split[5];
-            return new AuthTicket(uid, pin, version, time, expire, sign);
+            String loginType = split[5];
+            String sign = split[6];
+            return new AuthTicket(sid, pin, version, time, expire,loginType, sign);
         } catch (Exception e) {
             throw new OpenSsoException("sso decryptTicket error");
         }
@@ -37,11 +38,12 @@ public class TicketUtils {
         //加密ticket
         try {
             StringBuilder sb = new StringBuilder();
-            sb.append(authTicket.getUid()).append(",")
+            sb.append(authTicket.getSid()).append(",")
                     .append(authTicket.getPin()).append(",")
                     .append(authTicket.getVersion()).append(",")
                     .append(authTicket.getTime()).append(",")
                     .append(authTicket.getExpire()).append(",")
+                    .append(authTicket.getLoginType()).append(",")
                     .append(authTicket.getSign()).append(",");
             return AESUtils.encrypt(sb.toString(), cookieEncryptKey);
         } catch (Exception e) {

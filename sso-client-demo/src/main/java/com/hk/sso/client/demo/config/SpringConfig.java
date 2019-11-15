@@ -10,6 +10,8 @@ import org.springframework.context.annotation.ImportResource;
  *
  */
 @Configuration
-@ImportResource(locations = {"classpath:spring/spring-dubbo.xml"})
+@ImportResource(locations = {"classpath:spring/spring-dubbo.xml","classpath:spring/spring-bean.xml"})
 public class SpringConfig {
+
+
 }

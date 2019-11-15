@@ -13,7 +13,8 @@ public enum LoginStatus {
     ILLEGAL_USER(5,"用户非法"),
     SIGN_ERROR(6,"cookie签名错误"),
     SERVER_ERROR(7,"服务器错误"),
-    LOGOUT(8,"退出登录、没有登录态");
+    LOGOUT(8,"退出登录、没有登录态"),
+    LIMITED(9,"限流");
     public int code;
     public String desc;
 

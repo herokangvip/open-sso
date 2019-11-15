@@ -30,7 +30,7 @@ public class RpcSsoRemoteService implements SsoRemoteService {
             }
         }
         //校验ticket是否合法(是否存在登录态，登录态是否过期，是否修改密码等)
-        AuthTicket ticket = TicketRedisUtils.getTicket(authTicket.getPin());
+        AuthTicket ticket = TicketRedisUtils.getTicket(authTicket);
         //没有登录态
         if (ticket == null) {
             return LoginStatus.LOGOUT.code;
